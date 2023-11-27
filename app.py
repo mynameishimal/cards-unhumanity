@@ -13,7 +13,7 @@ games = {}  # This will store game data
 
 @app.route('/')
 def index():
-    return "Welcome to the Cards Against Humor API!"
+    return render_template('index.html')
 
 
 @app.route('/register', methods=['POST'])
