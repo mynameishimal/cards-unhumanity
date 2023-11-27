@@ -1,5 +1,7 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
+from database import cards_collection
+
 
 app = Flask(__name__)
 CORS(app)
@@ -58,6 +60,11 @@ def play_card(game_id):
     users[player]['funny_points'] += 1  # You'll have more complex logic here
 
     return jsonify(game), 200
+
+@app.route('/cards')
+def get_cards():
+    cards = cards_collection.find()  # Retrieve cards from MongoDB
+    return render_template('cards.html', cards=cards)
 
 
 if __name__ == '__main__':
