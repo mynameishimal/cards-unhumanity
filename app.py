@@ -13,24 +13,30 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/register', methods=['POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    # In a real app, you'd want to hash the password - NEVER store them as plaintext
-    username = request.json['username']
-    password = request.json['password']  # Please use something like bcrypt in a real app
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
 
-    if username in users:
-        return jsonify({'error': 'Username already exists'}), 409
+        # Check if password matches confirm password
+        if password != confirm_password:
+            return 'Passwords do not match!'
 
-    # Store the new user
-    users[username] = {
-        'username': username,
-        'password': password,  # Again, store hashed passwords, not plaintext
-        'games_played': 0,
-        'funny_points': 0
-    }
+        # Implement logic to store user details in your database
+        # For example:
+        # Store user details in a dictionary (this is just for demonstration)
+        user = {
+            'username': username,
+            'password': password  # In a real application, hash the password before storing it
+            # Add other user details if needed
+        }
+        # Store user data in your database or user management system
 
-    return jsonify(users[username]), 201
+        return f"Registration successful for user {username}!"
+
+    return render_template('register.html')
 
 
 @app.route('/game/<game_id>/play', methods=['POST'])
