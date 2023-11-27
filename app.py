@@ -1,10 +1,7 @@
 from flask import Flask, jsonify, request, render_template
-from flask_cors import CORS
 from database import cards_collection
 
-
 app = Flask(__name__)
-CORS(app)
 
 # In-memory 'database' structures
 users = {}  # This will store user data
@@ -36,7 +33,7 @@ def register():
     return jsonify(users[username]), 201
 
 
-@app.route('/game//play', methods=['POST'])
+@app.route('/game/<game_id>/play', methods=['POST'])
 def play_card(game_id):
     data = request.json
     player = data['player']
@@ -60,6 +57,7 @@ def play_card(game_id):
     users[player]['funny_points'] += 1  # You'll have more complex logic here
 
     return jsonify(game), 200
+
 
 @app.route('/cards')
 def get_cards():
