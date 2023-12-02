@@ -1,24 +1,21 @@
 import sqlite3
-import hashlib
 
+conn = sqlite3.connect('new_user_database.db')
+cursor = conn.cursor()
 
-# Function to hash passwords
-def hash_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()
+# Drop the existing 'users' table if it already exists
+cursor.execute('''DROP TABLE IF EXISTS users''')
 
+# Create the 'users' table
+cursor.execute('''
+    CREATE TABLE users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL,
+        password_hash TEXT NOT NULL
+    )
+''')
 
-# Function to initialize database
-def init_db():
-    conn = sqlite3.connect('user_database.db')
-    cursor = conn.cursor()
+print("Table 'users' recreated.")
 
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL,
-            password_hash TEXT NOT NULL
-        )
-    ''')
-
-    conn.commit()
-    conn.close()
+conn.commit()
+conn.close()

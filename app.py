@@ -1,21 +1,21 @@
 import hashlib
 import sqlite3
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+import os
 
 app = Flask(__name__)
 
-from database import init_db
+app.secret_key = os.urandom(24)
 
 # In-memory 'database' structures
 users = {}  # This will store user data
 games = {}  # This will store game data
 
-init_db()
-
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @app.route('/cards')
 def cards():
@@ -35,15 +35,23 @@ def register():
         password = request.form['password']
         hashed_password = hash_password(password)
 
-        conn = sqlite3.connect('user_database.db')
+        print("Username:", username)
+        print("Hashed Password:", hashed_password)
+
+        conn = sqlite3.connect('new_user_database.db')
         cursor = conn.cursor()
 
-        cursor.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", (username, hashed_password))
+        try:
+            cursor.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", (username, hashed_password))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('login'))
+        except sqlite3.Error as e:
+            print("SQLite error:", e)
+            conn.rollback()  # Rollback any changes if there's an error
+            conn.close()
+            return "Error occurred while registering"
 
-        conn.commit()
-        conn.close()
-
-        return redirect(url_for('login'))
     return render_template('register.html')
 
 
@@ -54,7 +62,7 @@ def login():
         password = request.form['password']
         hashed_password = hash_password(password)
 
-        conn = sqlite3.connect('user_database.db')
+        conn = sqlite3.connect('new_user_database.db')
         cursor = conn.cursor()
 
         cursor.execute("SELECT * FROM users WHERE username = ? AND password_hash = ?", (username, hashed_password))
@@ -64,7 +72,8 @@ def login():
 
         if user:
             # User authenticated, perform login actions
-            return "Login successful"
+            session['username'] = username
+            return render_template("dashboard.html", username=username)
         else:
             return "Invalid credentials"
 
@@ -119,6 +128,16 @@ def play_card(game_id):
 def get_cards():
     # cards = cards_collection.find()  # Retrieve cards from MongoDB
     return render_template('cards.html', cards=cards)
+
+
+@app.route('/question')
+def display_question(prompt_num=0, prompt="Your Mom!"):
+    # cards = cards_collection.find()  # Retrieve cards from MongoDB
+    return render_template('question.html', prompt_num=prompt_num, prompt=prompt)
+
+@app.route('/instructions')
+def instructions():
+    return render_template('instructions.html')
 
 
 if __name__ == '__main__':
