@@ -4,14 +4,101 @@
     <meta charset="UTF-8">
     <title>Login</title>
     <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+    <style>
+       body {
+          background-color: #000;
+            color: #fff;
+            padding: 50px;
+       }
+       .form-container {
+          max-width: 500px;
+            margin: 0 auto;
+       }
+       .form-group {
+            margin-bottom: 20px;
+       }
+       .form-group label {
+            font-weight: bold;
+       }
+       .form-control {
+          border: none;
+            border-bottom: 1px solid #fff;
+            background-color: transparent;
+            color: #fff;
+       }
+       .btn {
+            background-color: #fff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.1em;
+          margin-top: 10px;
+            display: block;
+            width: 100%;
+       }
+    </style>
 </head>
 <body>
-    <h1>Login</h1>
-    <!-- Login form -->
-    <form action="login_process.php" method="post">
-        <input type="text" name="username" placeholder="Username"><br>
-        <input type="password" name="password" placeholder="Password"><br>
-        <input type="submit" value="Login">
-    </form>
+    <div class="form-container">
+       <h1>Login</h1>
+       <!-- Login form -->
+       <form action="/login" method="post">
+            <input type="text" name="username" placeholder="Username" class="form-control"><br>
+            <input type="password" name="password" placeholder="Password" class="form-control"><br>
+            <input type="submit" value="Login" class="btn">
+       </form>
+
+       <!-- Google Sign In button -->
+       <button class="btn btn-danger" id="googleSignIn">Sign in with Google</button>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+    <script>
+       // Your web app's Firebase configuration
+       const firebaseConfig = {
+            apiKey: "AIzaSyDK773LkQ9J5z4Se2PDmu1q3zWoguYjqz8",
+            authDomain: "cards-unhumanity.firebaseapp.com",
+            projectId: "cards-unhumanity",
+            storageBucket: "cards-unhumanity.appspot.com",
+            messagingSenderId: "207262810415",
+            appId: "1:207262810415:web:52e81c2ae6ae61859ba1da",
+            measurementId: "G-QCGM5Q45D9"
+       };
+
+       // Initialize Firebase
+       const app = firebase.initializeApp(firebaseConfig);
+
+       // Google Sign In function
+       document.getElementById('googleSignIn').addEventListener('click', function() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth().signInWithPopup(provider).then(result => {
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                const token = result.credential.accessToken;
+                // The signed-in user info.
+                const user = result.user;
+                // Send token to your backend via HTTP.
+                fetch('/tokenSignIn', {
+                   method: 'POST',
+                   headers: {
+                      'Content-Type': 'application/json'
+                   },
+                   body: JSON.stringify({ token })
+                }).then(response => {
+                   return response.json();
+                }).then(data => {
+                   // Handle the response from your Flask app here
+                   if (data.success) {
+                        window.location.href = '/dashboard';
+                   }
+                }).catch(error => {
+                   console.error('Error during signInWithPopup:', error);
+                });
+            }).catch(error => {
+                // Handle Errors here.
+                console.error('Error during signInWithPopup:', error);
+            });
+       });
+    </script>
 </body>
 </html>

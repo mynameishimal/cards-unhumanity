@@ -1,13 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Register</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Registration</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      padding: 50px;
+    }
+    .form-container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      font-weight: bold;
+    }
+    .form-control {
+      border: none;
+      border-bottom: 1px solid #fff;
+      background-color: transparent;
+      color: #fff;
+    }
+    .btn {
+      background-color: #fff;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1.1em;
+    }
+  </style>
 </head>
 <body>
-    <h1>Register</h1>
-    <!-- Sign in with Google button -->
-    <button id="googleSignIn">Sign in with Google</button>
+  <div class="form-container">
+    <h1>User Registration</h1>
+    <form id="registrationForm">
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="confirm_password">Confirm Password:</label>
+        <input type="password" name="confirm_password" id="confirm_password" class="form-control">
+      </div>
+      <button type="button" class="btn btn-primary" onclick="registerUser()">Register</button>
+    </form>
+  </div>
+
+  <!-- Firebase SDK scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+  <!-- Your Firebase configuration and initialization -->
+  <script>
+    const firebaseConfig = {
+    apiKey: "AIzaSyDK773LkQ9J5z4Se2PDmu1q3zWoguYjqz8",
+    authDomain: "cards-unhumanity.firebaseapp.com",
+    projectId: "cards-unhumanity",
+    storageBucket: "cards-unhumanity.appspot.com",
+    messagingSenderId: "207262810415",
+    appId: "1:207262810415:web:52e81c2ae6ae61859ba1da",
+    measurementId: "G-QCGM5Q45D9"
+};
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Function to handle user registration
+    function registerUser() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm_password').value;
+
+      // Check if password and confirm password match
+      if (password !== confirmPassword) {
+        alert("Passwords don't match");
+        return;
+      }
+
+      // Create user with email and password
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          // User registered successfully
+          const user = userCredential.user;
+          console.log('User registered:', user);
+          // Handle further actions or redirects after successful registration
+        })
+        .catch((error) => {
+          // Handle errors during registration
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.error('Registration error:', errorCode, errorMessage);
+        });
+    }
+  </script>
 </body>
 </html>
