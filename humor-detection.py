@@ -1,39 +1,28 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 
-def get_score_list(prompts, cards, answers):
-    scores = []
-    for i, prompt in enumerate(prompts):
-        prompt_scores = []
-        for card in cards:
-            prompt_scores.append(get_humor_score(prompt, cards, card))
-        chosen_card_index = cards.index(answers[i])
-        scores.append(prompt_scores[chosen_card_index])
-    return scores
+def get_emotion_predictions(texts):
+    tokenizer = AutoTokenizer.from_pretrained(
+        "bdotloh/distilbert-base-uncased-go-emotion-empathetic-dialogues-context-v2")
+    model = AutoModelForSequenceClassification.from_pretrained(
+        "bdotloh/distilbert-base-uncased-go-emotion-empathetic-dialogues-context-v2")
 
-
-def get_humor_score(prompt, cards, chosen_card):
-    tokenizer = AutoTokenizer.from_pretrained("mohameddhiab/humor-no-humor")
-    model = AutoModelForSequenceClassification.from_pretrained("mohameddhiab/humor-no-humor")
-
-    # Combine prompt with each card
-    combinations = [f"{prompt} {card}" for card in cards]
-
-    # Tokenize the combinations
-    inputs = tokenizer(combinations, padding=True, truncation=True, return_tensors="pt")
-
-    # Get model predictions for humor detection
+    inputs = tokenizer(texts, padding=True, truncation=True, return_tensors="pt")
     outputs = model(**inputs)
-    predictions = outputs.logits.argmax(axis=1)
+    emotions_predictions = outputs.logits.softmax(dim=1)
 
-    # Get the humor score for the chosen card
-    chosen_index = cards.index(chosen_card)
-    chosen_score = predictions[chosen_index].item()
-
-    return chosen_score
+    return emotions_predictions
 
 
 def main():
+    # Get the emotion labels used by the model
+    emotion_labels = get_emotion_labels()
+
+    # For example, print out the emotion labels
+    print("Emotion Labels:")
+    for label_id, emotion_label in emotion_labels.items():
+        print(f"{label_id}: {emotion_label}")
+
     prompts = [
         "Why did the scarecrow win an award?",
         "What do you call a bear with no teeth?",
@@ -46,16 +35,18 @@ def main():
         "They don't have the guts."
     ]
 
-    answers = [
-        "Because he was outstanding in his field!",
-        "A gummy bear!",
-        "They don't have the guts."
-    ]
+    combinations = [f"{prompt} {card}" for prompt, card in zip(prompts, cards)]
+    emotions_predictions = get_emotion_predictions(combinations)
 
-    scores = get_score_list(prompts, cards, answers)
+    for i, combination in enumerate(combinations):
+        print(f"Combination: {combination}")
+        print("Emotion Predictions:", emotions_predictions[i])
 
-    for i, score in enumerate(scores):
-        print(f"Prompt: {prompts[i]}, Chosen Card: {answers[i]}, Humor Score: {score}")
+
+def get_emotion_labels():
+    model_name = "bdotloh/distilbert-base-uncased-go-emotion-empathetic-dialogues-context-v2"
+    model = AutoModelForSequenceClassification.from_pretrained(model_name)
+    return model.config.id2label
 
 
 if __name__ == "__main__":
