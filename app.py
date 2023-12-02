@@ -1,15 +1,16 @@
+import hashlib
+import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, session
-import firebase_admin
-from firebase_admin import credentials, auth
-
-cred = credentials.Certificate("cards-unhumanity-firebase-adminsdk-4muf7-b19030a37f.json")
-firebase_admin.initialize_app(cred)
 
 app = Flask(__name__)
+
+from database import init_db
 
 # In-memory 'database' structures
 users = {}  # This will store user data
 games = {}  # This will store game data
+
+init_db()
 
 
 @app.route('/')
@@ -17,30 +18,28 @@ def index():
     return render_template('index.html')
 
 
+# Function to hash passwords
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+
+# Route for user registration
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form['email']  # Make sure the form field is 'email', not 'username'
+        username = request.form['username']
         password = request.form['password']
+        hashed_password = hash_password(password)
 
-        try:
-            # Create user in Firebase Authentication
-            user = auth.create_user(email=username, password=password)
+        conn = sqlite3.connect('user_database.db')
+        cursor = conn.cursor()
 
-            # Registration successful
-            # Optionally perform further actions or redirects
+        cursor.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", (username, hashed_password))
 
-            # You can set session here if needed
-            session['username'] = username
+        conn.commit()
+        conn.close()
 
-            # Redirect to a dashboard or success page
-            return redirect(url_for('dashboard'))
-
-        except Exception as e:
-            # Handle registration errors
-            print("Registration failed:", str(e))
-            return render_template('registration_error.html')
-
+        return redirect(url_for('login'))
     return render_template('register.html')
 
 
@@ -49,17 +48,21 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        hashed_password = hash_password(password)
 
-        try:
-            user = auth.get_user_by_email(username)
-            # Sign in the user using Firebase Authentication
-            logged_in_user = auth.sign_in_with_email_and_password(username, password)
-            session['username'] = username
-            return redirect(url_for('dashboard'))
-        except auth.AuthError as e:
-            # Handle authentication error
-            print(f"Authentication failed: {str(e)}")
-            return redirect(url_for('login'))
+        conn = sqlite3.connect('user_database.db')
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM users WHERE username = ? AND password_hash = ?", (username, hashed_password))
+        user = cursor.fetchone()
+
+        conn.close()
+
+        if user:
+            # User authenticated, perform login actions
+            return "Login successful"
+        else:
+            return "Invalid credentials"
 
     return render_template('login.html')
 

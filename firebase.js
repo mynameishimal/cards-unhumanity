@@ -32,6 +32,7 @@ function signInWithEmailAndPassword() {
 
 }
 
+// Function to handle user registration
 function registerUser() {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
@@ -43,7 +44,6 @@ function registerUser() {
     return;
   }
 
-  // Create user with email and password
   // Create user with email and password
   firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
@@ -57,7 +57,7 @@ function registerUser() {
       const errorCode = error.code;
       const errorMessage = error.message;
       console.error('Registration error:', errorCode, errorMessage);
-    })
+    });
 }
 
 
