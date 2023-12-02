@@ -2,6 +2,7 @@ import hashlib
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import os
+from cards_manager import CardManager
 
 app = Flask(__name__)
 
@@ -130,10 +131,33 @@ def get_cards():
     return render_template('cards.html', cards=cards)
 
 
-@app.route('/question')
+# Needs Better implementation!! Dummy function for now
+def get_prompts():
+    return ["ur mom", "starbucks", "pasta", "youre losing me", "david malan on his birthday", "happy go lucky irky",
+            "dorm decor", "lol"]
+
+
+@app.route('/question/<int:prompt_num>')
 def display_question(prompt_num=0, prompt="Your Mom!"):
-    # cards = cards_collection.find()  # Retrieve cards from MongoDB
-    return render_template('question.html', prompt_num=prompt_num, prompt=prompt)
+    prompts = get_prompts()
+    if 0 <= prompt_num < len(prompts):
+        prompt = prompts[prompt_num]
+        next_prompt_num = prompt_num + 1  # Increment prompt_num for the next question
+    else:
+        prompt = "No more prompts"  # Placeholder for when there are no more prompts
+        next_prompt_num = None
+
+    # Gets cards
+    # This is a sample and should be replaced with something legit!
+    cards = ["crystals", "cs50", "the duck", "mit", "dean khurana", "blank street coffee",
+                       "random bank of america info sessions"
+        , "racist tourists", "your roommates hair clogging the bathroom"]
+    card_manager = CardManager(cards)
+    drawn_cards = card_manager.get_cards(num_cards=6)
+    print(drawn_cards)
+
+    return render_template('question.html', prompt_num=prompt_num, prompt=prompt, next_prompt_num=next_prompt_num, drawn_cards = drawn_cards)
+
 
 @app.route('/instructions')
 def instructions():
