@@ -165,7 +165,7 @@ def display_question():
 @app.route('/collect_answers', methods=['POST'])
 def collect_answers():
     prompt = request.form.get('prompt')  # Get the prompt from the form
-    user_answer = request.form.get('user_answer')  # Get the user's answer from the form
+    user_answer = request.form.get('selected_card')  # Get the user's answer from the form
 
     # Retrieve the existing game data from the session or initialize an empty list
     game_data = session.get('game_data', [])
@@ -177,7 +177,7 @@ def collect_answers():
     session['game_data'] = game_data
 
     # Increment the prompt number stored in the session by 1
-    next_prompt_num = session.get('prompt_num', 0) + 1
+    next_prompt_num = session.get('prompt_num', 1) + 1
     session['prompt_num'] = next_prompt_num
 
     # Redirect to the next question prompt route
