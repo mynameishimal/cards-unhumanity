@@ -1,5 +1,9 @@
-from flask import Flask, jsonify, request, render_template
-from database import cards_collection
+from flask import Flask, render_template, request, redirect, url_for, session
+import firebase_admin
+from firebase_admin import credentials, auth
+
+cred = credentials.Certificate("cards-unhumanity-firebase-adminsdk-4muf7-b19030a37f.json")
+firebase_admin.initialize_app(cred)
 
 app = Flask(__name__)
 
@@ -16,27 +20,66 @@ def index():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        confirm_password = request.form.get('confirm_password')
+        username = request.form['email']  # Make sure the form field is 'email', not 'username'
+        password = request.form['password']
 
-        # Check if password matches confirm password
-        if password != confirm_password:
-            return 'Passwords do not match!'
+        try:
+            # Create user in Firebase Authentication
+            user = auth.create_user(email=username, password=password)
 
-        # Implement logic to store user details in your database
-        # For example:
-        # Store user details in a dictionary (this is just for demonstration)
-        user = {
-            'username': username,
-            'password': password  # In a real application, hash the password before storing it
-            # Add other user details if needed
-        }
-        # Store user data in your database or user management system
+            # Registration successful
+            # Optionally perform further actions or redirects
 
-        return f"Registration successful for user {username}!"
+            # You can set session here if needed
+            session['username'] = username
+
+            # Redirect to a dashboard or success page
+            return redirect(url_for('dashboard'))
+
+        except Exception as e:
+            # Handle registration errors
+            print("Registration failed:", str(e))
+            return render_template('registration_error.html')
 
     return render_template('register.html')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        try:
+            user = auth.get_user_by_email(username)
+            # Sign in the user using Firebase Authentication
+            logged_in_user = auth.sign_in_with_email_and_password(username, password)
+            session['username'] = username
+            return redirect(url_for('dashboard'))
+        except auth.AuthError as e:
+            # Handle authentication error
+            print(f"Authentication failed: {str(e)}")
+            return redirect(url_for('login'))
+
+    return render_template('login.html')
+
+
+@app.route('/dashboard')
+def dashboard():
+    # Check if the user is logged in before rendering the dashboard
+    if 'username' in session:
+        username = session['username']
+        # Fetch user data or perform necessary operations for the dashboard
+        return render_template('dashboard.html', username=username)
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route('/logout')
+def logout():
+    # Clear the session and log the user out
+    session.pop('username', None)
+    return redirect(url_for('login'))
 
 
 @app.route('/game/<game_id>/play', methods=['POST'])
@@ -67,7 +110,7 @@ def play_card(game_id):
 
 @app.route('/cards')
 def get_cards():
-    cards = cards_collection.find()  # Retrieve cards from MongoDB
+    # cards = cards_collection.find()  # Retrieve cards from MongoDB
     return render_template('cards.html', cards=cards)
 
 
