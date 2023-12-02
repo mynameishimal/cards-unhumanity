@@ -17,6 +17,10 @@ init_db()
 def index():
     return render_template('index.html')
 
+@app.route('/cards')
+def cards():
+    return render_template('cards.html')
+
 
 # Function to hash passwords
 def hash_password(password):
