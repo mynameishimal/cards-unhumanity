@@ -137,26 +137,51 @@ def get_prompts():
             "dorm decor", "lol"]
 
 
-@app.route('/question/<int:prompt_num>')
-def display_question(prompt_num=0, prompt="Your Mom!"):
+"""NOTE TO SELF TO RESET DATA AT THE BEGINNING OF EVERY SESSION!!!"""
+
+
+@app.route('/question')
+def display_question():
+    prompt_num = session.get('prompt_num', 1)  # Retrieve prompt_num from the session or default to 0
     prompts = get_prompts()
     if 0 <= prompt_num < len(prompts):
         prompt = prompts[prompt_num]
         next_prompt_num = prompt_num + 1  # Increment prompt_num for the next question
     else:
-        prompt = "No more prompts"  # Placeholder for when there are no more prompts
-        next_prompt_num = None
+        return render_template('game_data.html', game_data=session.get('game_data'))
 
     # Gets cards
     # This is a sample and should be replaced with something legit!
     cards = ["crystals", "cs50", "the duck", "mit", "dean khurana", "blank street coffee",
-                       "random bank of america info sessions"
-        , "racist tourists", "your roommates hair clogging the bathroom"]
+             "random bank of america info sessions", "racist tourists", "your roommates hair clogging the bathroom"]
     card_manager = CardManager(cards)
     drawn_cards = card_manager.get_cards(num_cards=6)
     print(drawn_cards)
 
-    return render_template('question.html', prompt_num=prompt_num, prompt=prompt, next_prompt_num=next_prompt_num, drawn_cards = drawn_cards)
+    return render_template('question.html', prompt_num=prompt_num, prompt=prompt, next_prompt_num=next_prompt_num,
+                           drawn_cards=drawn_cards)
+
+
+@app.route('/collect_answers', methods=['POST'])
+def collect_answers():
+    prompt = request.form.get('prompt')  # Get the prompt from the form
+    user_answer = request.form.get('user_answer')  # Get the user's answer from the form
+
+    # Retrieve the existing game data from the session or initialize an empty list
+    game_data = session.get('game_data', [])
+
+    # Store the prompt and user answer in the game data list
+    game_data.append({'prompt': prompt, 'user_answer': user_answer})
+
+    # Update the game data in the session
+    session['game_data'] = game_data
+
+    # Increment the prompt number stored in the session by 1
+    next_prompt_num = session.get('prompt_num', 0) + 1
+    session['prompt_num'] = next_prompt_num
+
+    # Redirect to the next question prompt route
+    return redirect(url_for('display_question', prompt_num=next_prompt_num))
 
 
 @app.route('/instructions')

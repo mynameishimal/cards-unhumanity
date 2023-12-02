@@ -13,10 +13,20 @@
 
         /* Ensure all cards have the same height */
         .card {
-            min-height: 200px; /* Set a minimum height for the cards */
+            height: 200px; /* Set a fixed height for the cards */
+            width: 200px; /* Set a fixed width for the cards */
             background-color: white;
             color: black;
-            height: 100%; /* Use 100% height for consistent box size */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Special styling for the prompt card */
+        .prompt-card {
+            width: 80%; /* Set a specific width for the prompt card */
+            margin: 0 auto; /* Center the prompt card */
         }
     </style>
 </head>
@@ -26,7 +36,7 @@
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-12 mb-4">
-            <div class="card bg-light">
+            <div class="card bg-light prompt-card">
                 <div class="card-body">
                     <h5 class="card-title">Prompt #{{ prompt_num }}</h5>
                     <p class="card-text">{{ prompt }}</p>
@@ -36,67 +46,37 @@
     </div>
     <div class="row">
         <!-- First row of cards -->
-        <div class="col-md-4 mb-4">
-            <a href="/question/{{ next_prompt_num }}" class="card bg-light text-decoration-none">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">Card 1</h5>
-                    <p class="card-text"> {{drawn_cards[0]}}</p>
-                </div>
-            </div>
-            </a>
+        {% for card in drawn_cards[:3] %}
+        <div class="col-md-4 mb-4 d-flex justify-content-center">
+            <form action="/collect_answers" method="POST">
+                <input type="hidden" name="selected_card" value="{{ card }}">
+                <button type="submit" class="card bg-light text-decoration-none">
+                    <div class="card-body">
+                        <h5 class="card-title">Card</h5>
+                        <p class="card-text">{{ card }}</p>
+                    </div>
+                </button>
+                <input type="hidden" name="prompt" value="{{ prompt }}">
+            </form>
         </div>
-        <div class="col-md-4 mb-4">
-            <a href="/question/{{ next_prompt_num }}" class="card bg-light text-decoration-none">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">Card 2</h5>
-                    <p class="card-text">{{drawn_cards[1]}}</p>
-                </div>
-            </div>
-            </a>
-        </div>
-        <div class="col-md-4 mb-4">
-            <a href="/question/{{ next_prompt_num }}" class="card bg-light text-decoration-none">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">Card 3</h5>
-                    <p class="card-text">{{drawn_cards[2]}}</p>
-                </div>
-            </div>
-            </a>
-        </div>
+        {% endfor %}
+    </div>
+    <div class="row">
         <!-- Second row of cards -->
-        <div class="col-md-4 mb-4">
-            <a href="/question/{{ next_prompt_num }}" class="card bg-light text-decoration-none">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">Card 4</h5>
-                    <p class="card-text">{{drawn_cards[3]}}</p>
-                </div>
-            </div>
-            </a>
+        {% for card in drawn_cards[3:] %}
+        <div class="col-md-4 mb-4 d-flex justify-content-center">
+            <form action="/collect_answers" method="POST">
+                <input type="hidden" name="selected_card" value="{{ card }}">
+                <button type="submit" class="card bg-light text-decoration-none">
+                    <div class="card-body">
+                        <h5 class="card-title">Card</h5>
+                        <p class="card-text">{{ card }}</p>
+                    </div>
+                </button>
+                <input type="hidden" name="prompt" value="{{ prompt }}">
+            </form>
         </div>
-        <div class="col-md-4 mb-4">
-            <a href="/question/{{ next_prompt_num }}" class="card bg-light text-decoration-none">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">Card 5</h5>
-                    <p class="card-text">{{drawn_cards[4]}}</p>
-                </div>
-            </div>
-            </a>
-        </div>
-        <div class="col-md-4 mb-4">
-            <a href="/question/{{ next_prompt_num }}" class="card bg-light text-decoration-none">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">Card 6</h5>
-                    <p class="card-text"> {{drawn_cards[5]}} </p>
-                </div>
-            </div>
-            </a>
-        </div>
+        {% endfor %}
     </div>
 </div>
 

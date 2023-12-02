@@ -2,55 +2,63 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+    <title>User Login</title>
     <style>
-       body {
-          background-color: #000;
+        body {
+            background-color: #000;
             color: #fff;
-            padding: 50px;
-       }
-       .form-container {
-          max-width: 500px;
-            margin: 0 auto;
-       }
-       .form-group {
-            margin-bottom: 20px;
-       }
-       .form-group label {
-            font-weight: bold;
-       }
-       .form-control {
-          border: none;
-            border-bottom: 1px solid #fff;
-            background-color: transparent;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-card {
+            background-color: #333;
             color: #fff;
-       }
-       .btn {
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .login-card h1 {
+            text-align: center;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .login-form input[type="text"],
+        .login-form input[type="password"] {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            background-color: #444;
+            color: #fff;
+        }
+
+        .login-form button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
             background-color: #fff;
             color: #000;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1.1em;
-          margin-top: 10px;
-            display: block;
-            width: 100%;
-       }
+            cursor: pointer;
+        }
     </style>
 </head>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>User Login</title>
-</head>
 <body>
-    <h1>User Login</h1>
-    <form method="POST" action="/login">
-        <input type="text" name="username" placeholder="Username" required><br>
-        <input type="password" name="password" placeholder="Password" required><br>
-        <button type="submit">Login</button>
-    </form>
+    <div class="login-card">
+        <h1>User Login</h1>
+        <form class="login-form" method="POST" action="/login">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
 </body>
-</html>
-
 </html>

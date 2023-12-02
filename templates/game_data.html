@@ -1,0 +1,33 @@
+<!-- end_of_game.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>End of Game</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-4">
+    <h1>End of Game</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Prompt</th>
+                <th scope="col">User's Answer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in game_data %}
+            <tr>
+                <td>{{ data.prompt }}</td>
+                <td>{{ data.user_answer }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
