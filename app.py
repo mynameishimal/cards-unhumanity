@@ -2,7 +2,11 @@ import hashlib
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import os
+
+from transformers import AutoModelForSequenceClassification
+
 from cards_manager import CardManager
+from humor_algo import calculate_emotion_score
 
 app = Flask(__name__)
 
@@ -99,32 +103,6 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/game/<game_id>/play', methods=['POST'])
-def play_card(game_id):
-    data = request.json
-    player = data['player']
-    card = data['card']
-
-    # Simulate playing a card in a game
-    if game_id not in games:
-        games[game_id] = {
-            'players': [],
-            'played_cards': []
-        }
-    game = games[game_id]
-
-    # Add the card to the played cards for the game
-    game['played_cards'].append({
-        'player': player,
-        'card': card
-    })
-
-    # Update the user's funny points
-    users[player]['funny_points'] += 1  # You'll have more complex logic here
-
-    return jsonify(game), 200
-
-
 @app.route('/cards')
 def get_cards():
     # cards = cards_collection.find()  # Retrieve cards from MongoDB
@@ -184,9 +162,40 @@ def collect_answers():
     return redirect(url_for('display_question', prompt_num=next_prompt_num))
 
 
+@app.route('/end_game')
+def end_game(game_data):
+    model = AutoModelForSequenceClassification.from_pretrained(
+        "bdotloh/distilbert-base-uncased-go-emotion-empathetic-dialogues-context-v2")
+
+    # Extract prompts and user answers for humor score calculation
+    prompts = [data['prompt'] for data in game_data]
+    user_answers = [data['user_answer'] for data in game_data]
+
+    # Calculate humor scores for all prompt-answer pairs at the end of the game
+    humor_scores = calculate_emotion_score(prompts, user_answers, model)
+
+    # Combine game_data with humor_scores for further processing or storage
+    game_data_with_scores = [{'prompt': prompt, 'user_answer': user_answer, 'emotion_score': score}
+                             for prompt, user_answer, score in zip(prompts, user_answers, humor_scores)]
+
+    print(game_data_with_scores)
+
+    # Clear game_data after calculating scores
+    game_data.clear()
+
+    print(game_data_with_scores)
+
+    return render_template('end_game.html', game_data_with_scores=game_data_with_scores)
+
+
 @app.route('/instructions')
 def instructions():
     return render_template('instructions.html')
+
+
+@app.route('/about')
+def about():
+    return render_template('aboutUs.html')
 
 
 if __name__ == '__main__':

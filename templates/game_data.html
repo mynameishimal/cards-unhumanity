@@ -16,6 +16,7 @@
             <tr>
                 <th scope="col">Prompt</th>
                 <th scope="col">Your Answer</th>
+                <th scope="col">Emotion Score</th>
             </tr>
         </thead>
         <tbody>
@@ -23,6 +24,7 @@
             <tr>
                 <td>{{ data.prompt }}</td>
                 <td>{{ data.user_answer }}</td>
+                <td>{{ data.emotion_score }}</td>
             </tr>
             {% endfor %}
         </tbody>

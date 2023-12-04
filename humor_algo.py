@@ -38,6 +38,7 @@ def normalize_scores(scores):
     return [score / max_score for score in scores]
 
 
+# test function
 def main():
     prompts = [
         "Why did the scarecrow win an award?",
