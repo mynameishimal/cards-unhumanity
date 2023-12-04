@@ -6,7 +6,11 @@ import os
 from transformers import AutoModelForSequenceClassification
 
 from cards_manager import CardManager
+from cards_manager import sample_card_list
+from prompts_manager import PromptManager
+from prompts_manager import prompts
 from humor_algo import calculate_emotion_score
+import random
 
 app = Flask(__name__)
 
@@ -111,8 +115,7 @@ def get_cards():
 
 # Needs Better implementation!! Dummy function for now
 def get_prompts():
-    return ["ur mom", "starbucks", "pasta", "youre losing me", "david malan on his birthday", "happy go lucky irky",
-            "dorm decor", "lol"]
+    return prompts
 
 
 """NOTE TO SELF TO RESET DATA AT THE BEGINNING OF EVERY SESSION!!!"""
@@ -121,9 +124,9 @@ def get_prompts():
 @app.route('/question')
 def display_question():
     prompt_num = session.get('prompt_num', 1)  # Retrieve prompt_num from the session or default to 0
-    prompts = get_prompts()
-    if 0 <= prompt_num < len(prompts):
-        prompt = prompts[prompt_num]
+    prompt_list = random.sample(prompts, 10)
+    if 0 <= prompt_num < len(prompt_list):
+        prompt = prompt_list[prompt_num]
         next_prompt_num = prompt_num + 1  # Increment prompt_num for the next question
     else:
         print("DONE")
@@ -135,10 +138,11 @@ def display_question():
 
     # Gets cards
     # This is a sample and should be replaced with something legit!
-    cards = ["crystals", "cs50", "the duck", "mit", "dean khurana", "blank street coffee",
-             "random bank of america info sessions", "racist tourists", "your roommates hair clogging the bathroom"]
-    card_manager = CardManager(cards)
-    drawn_cards = card_manager.get_cards(num_cards=6)
+    cards = sample_card_list
+    #card_manager = CardManager(cards)
+    #drawn_cards = card_manager.get_cards(num_cards=6)
+    #print(drawn_cards)
+    drawn_cards = random.sample(cards, 6)
     print(drawn_cards)
 
     return render_template('question.html', prompt_num=prompt_num, prompt=prompt, next_prompt_num=next_prompt_num,

@@ -5,12 +5,10 @@ from collections import deque
 # Sample list of prompts
 prompts = [
     "In its new tourism campaign, Detroit proudly proclaims that it has finally eliminated _____.",
-    "_____ is a slippery slope that leads to _____.",
     "What does Dick Cheney prefer?",
     "In L.A. County Jail, word is you can trade 200 cigarettes for _____.",
     "_____: Good to the last drop.",
     "What don't you want to find in your Chinese food?",
-    "In M. Night Shyamalan's new movie, Bruce Willis discovers that _____ had really been _____ all along.",
     "_____: Kid-tested, mother-approved.",
     "What ended my last relationship?",
     "In Michael Jackson's final moments, he thought about _____.",
@@ -40,11 +38,9 @@ prompts = [
     "Life was difficult for cavemen before _____.",
     "Alternative medicine is now embracing the curative powers of _____.",
     "What would grandma find disturbing, yet oddly charming?",
-    "Lifetime presents _____, the story of _____.",
     "And I would have gotten away with it, too, if it hadn't been for _____.",
     "What's a girl's best friend?",
     "Major League Baseball has banned _____ for giving players an unfair advantage.",
-    "And the Academy Award for _____ goes to _____.",
     "What's my antidrug?",
     "Maybe she's born with it. Maybe it's _____.",
     "Anthropologists have recently discovered a primitive tribe that worships _____.",
@@ -58,7 +54,6 @@ prompts = [
     "Next on ESPN2: The World Series of _____.",
     "But before I kill you, Mr. Bond, I must show you _____.",
     "What's that sound?",
-    "Rumor has it that Vladimir Putin's favorite dish is _____ stuffed with _____.",
     "Coming to Broadway this season, _____: The Musical.",
     "What's the crustiest?",
     "Science will never explain the origin of _____.",
@@ -70,11 +65,9 @@ prompts = [
     "Studies show that lab rats navigate mazes 50% faster after being exposed to _____.",
     "During Picasso's often-overlooked Brown Period, he produced hundreds of paintings of _____.",
     "What's the new fad diet?",
-    "That's right, I killed _____. How, you ask? _____.",
     "During sex, I like to think about _____.",
     "What's the next Happy Meal toy?",
     "The CIA now interrogates enemy agents by repeatedly subjecting them to _____.",
-    "For my next trick, I will pull _____ out of _____.",
     "What's the next superhero/sidekick duo?",
     "The class field trip was completely ruined by _____.",
     "He who controls _____ controls the world.",
@@ -87,7 +80,7 @@ prompts = [
 
 
 
-class CardManager:
+class PromptManager:
     def __init__(self, prompts):
         self.prompt_queue = deque(prompts)
 
@@ -110,3 +103,12 @@ class CardManager:
     def reset_prompts(self):
         prompt_list = prompts
         self.prompt_queue = deque(prompt_list)
+    
+    def pick_random_prompts(prompts):
+        # Ensure that the number of prompts to pick is not greater than the length of the list
+        num_prompts_to_pick = min(10, len(prompts))
+        
+        # Use random.sample to pick 10 cards randomly
+        selected_prompts = random.sample(sample_prompt_list, num_prompts_to_pick)
+        
+        return selected_prompts

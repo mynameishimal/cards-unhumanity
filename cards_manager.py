@@ -1,4 +1,5 @@
 from collections import deque
+import random
 
 # cards_manager.py
 
@@ -239,3 +240,12 @@ class CardManager:
     def reset_cards(self):
         cards = sample_card_list
         self.card_queue = deque(cards)
+
+    def pick_random_cards(sample_card_list):
+        # Ensure that the number of cards to pick is not greater than the length of the list
+        num_cards_to_pick = min(10, len(sample_card_list))
+        
+        # Use random.sample to pick 10 cards randomly
+        selected_cards = random.sample(sample_card_list, num_cards_to_pick)
+        
+        return selected_cards
