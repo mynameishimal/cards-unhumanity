@@ -185,7 +185,7 @@ def end_game(game_data):
 
     print(game_data_with_scores)
 
-    return render_template('end_game.html', game_data_with_scores=game_data_with_scores)
+    return render_template('game_data.html', game_data_with_scores=game_data_with_scores)
 
 
 @app.route('/instructions')
