@@ -126,7 +126,10 @@ def display_question():
         prompt = prompts[prompt_num]
         next_prompt_num = prompt_num + 1  # Increment prompt_num for the next question
     else:
-        return render_template('game_data.html', game_data=session.get('game_data'))
+        print("DONE")
+        my_game_data = session.get("game_data")
+        stats = end_game(my_game_data)
+        return render_template('game_data.html', game_data = stats)
 
     # Gets cards
     # This is a sample and should be replaced with something legit!
@@ -183,10 +186,7 @@ def end_game(game_data):
     # Clear game_data after calculating scores
     game_data.clear()
 
-    print(game_data_with_scores)
-
-    return render_template('game_data.html', game_data_with_scores=game_data_with_scores)
-
+    return game_data_with_scores
 
 @app.route('/instructions')
 def instructions():

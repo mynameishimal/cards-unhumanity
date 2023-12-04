@@ -1,7 +1,7 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 
-def get_top_emotions(texts, model, top_k=5):
+def get_top_emotions(texts, model, top_k=6):
     tokenizer = AutoTokenizer.from_pretrained(
         "bdotloh/distilbert-base-uncased-go-emotion-empathetic-dialogues-context-v2")
 
@@ -14,8 +14,8 @@ def get_top_emotions(texts, model, top_k=5):
     return top_emotions_indices
 
 
-def calculate_emotion_score(prompts, cards, answers, model):
-    emotions_of_interest = ["surprised", "guilty", "joyful", "nostalgic", "embarrassed"]
+def calculate_emotion_score(prompts, cards, model):
+    emotions_of_interest = ["surprised", "guilty", "joyful", "nostalgic", "embarrassed", "furious", "jealous", "content", "angry", "anticipating"]
     combinations = [f"{prompt} {card}" for prompt, card in zip(prompts, cards)]
 
     top_emotions_indices = get_top_emotions(combinations, model)
