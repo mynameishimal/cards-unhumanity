@@ -128,8 +128,10 @@ def display_question():
     else:
         print("DONE")
         my_game_data = session.get("game_data")
-        stats = end_game(my_game_data)
-        return render_template('game_data.html', game_data = stats)
+        results = end_game(my_game_data)
+        stats = results[0]
+        total = results[1]
+        return render_template('game_data.html', game_data = stats, total_score = total)
 
     # Gets cards
     # This is a sample and should be replaced with something legit!
@@ -181,12 +183,21 @@ def end_game(game_data):
     game_data_with_scores = [{'prompt': prompt, 'user_answer': user_answer, 'emotion_score': score}
                              for prompt, user_answer, score in zip(prompts, user_answers, humor_scores)]
 
+    total_score = 0
+    for prompt, user_answer, score in zip(prompts, user_answers, humor_scores):
+        total_score += score
+    
+
     print(game_data_with_scores)
+    print(total_score)
 
     # Clear game_data after calculating scores
     game_data.clear()
 
-    return game_data_with_scores
+    temp = [game_data_with_scores, total_score]
+
+    return [game_data_with_scores, total_score]
+    #return game_data_with_scores
 
 @app.route('/instructions')
 def instructions():
