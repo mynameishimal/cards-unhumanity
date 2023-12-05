@@ -5,9 +5,7 @@ import os
 
 from transformers import AutoModelForSequenceClassification
 
-from cards_manager import CardManager
 from cards_manager import sample_card_list
-from prompts_manager import PromptManager
 from prompts_manager import prompts
 from humor_algo import calculate_emotion_score
 import random
@@ -133,16 +131,22 @@ def display_question():
         return render_template('game_data.html', game_data=stats, total_score=total)
 
     # Gets cards
-    # This is a sample and should be replaced with something legit!
     cards = sample_card_list
-    # card_manager = CardManager(cards)
-    # drawn_cards = card_manager.get_cards(num_cards=6)
-    # print(drawn_cards)
     drawn_cards = random.sample(cards, 6)
     print(drawn_cards)
 
     return render_template('question.html', prompt_num=prompt_num, prompt=prompt, next_prompt_num=next_prompt_num,
                            drawn_cards=drawn_cards)
+
+
+@app.route('/reset_game')
+def reset_game():
+    # Clear session data related to the game
+    session.pop('prompt_num', None)
+    session.pop('game_data', None)
+
+    # Redirect back to the initial state of the game
+    return redirect('/question')  # Redirect to the initial question route or wherever the game starts
 
 
 @app.route('/collect_answers', methods=['POST'])
@@ -191,8 +195,7 @@ def end_game(game_data):
 
     # Clear game_data after calculating scores
     game_data.clear()
-
-    temp = [game_data_with_scores, total_score]
+    reset_game()
 
     return [game_data_with_scores, total_score]
     # return game_data_with_scores
