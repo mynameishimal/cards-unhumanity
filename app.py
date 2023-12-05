@@ -16,10 +16,6 @@ app = Flask(__name__)
 
 app.secret_key = os.urandom(24)
 
-# In-memory 'database' structures
-users = {}  # This will store user data
-games = {}  # This will store game data
-
 
 @app.route('/')
 def index():
