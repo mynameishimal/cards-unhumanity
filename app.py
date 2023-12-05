@@ -118,7 +118,7 @@ def get_prompts():
 @app.route('/question')
 def display_question():
     prompt_num = session.get('prompt_num', 1)  # Retrieve prompt_num from the session or default to 0
-    prompt_list = random.sample(prompts, 10)
+    prompt_list = random.sample(prompts, 11)
     if 0 <= prompt_num < len(prompt_list):
         prompt = prompt_list[prompt_num]
         next_prompt_num = prompt_num + 1  # Increment prompt_num for the next question
