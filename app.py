@@ -130,14 +130,14 @@ def display_question():
         results = end_game(my_game_data)
         stats = results[0]
         total = results[1]
-        return render_template('game_data.html', game_data = stats, total_score = total)
+        return render_template('game_data.html', game_data=stats, total_score=total)
 
     # Gets cards
     # This is a sample and should be replaced with something legit!
     cards = sample_card_list
-    #card_manager = CardManager(cards)
-    #drawn_cards = card_manager.get_cards(num_cards=6)
-    #print(drawn_cards)
+    # card_manager = CardManager(cards)
+    # drawn_cards = card_manager.get_cards(num_cards=6)
+    # print(drawn_cards)
     drawn_cards = random.sample(cards, 6)
     print(drawn_cards)
 
@@ -186,10 +186,8 @@ def end_game(game_data):
     total_score = 0
     for prompt, user_answer, score in zip(prompts, user_answers, humor_scores):
         total_score += score
-    
 
-    print(game_data_with_scores)
-    print(total_score)
+    update_user_stats(session['username'], total_score)
 
     # Clear game_data after calculating scores
     game_data.clear()
@@ -197,11 +195,87 @@ def end_game(game_data):
     temp = [game_data_with_scores, total_score]
 
     return [game_data_with_scores, total_score]
-    #return game_data_with_scores
+    # return game_data_with_scores
+
 
 @app.route('/instructions')
 def instructions():
     return render_template('instructions.html')
+
+
+def update_user_stats(username, total_score):
+    conn = sqlite3.connect('user_stats.db')
+    cursor = conn.cursor()
+
+    # Fetch the user's current stats
+    cursor.execute("SELECT * FROM user_stats WHERE username=?", (username,))
+    user_stats = cursor.fetchone()
+
+    if user_stats:
+        # Update games played
+        games_played = int(user_stats[2]) + 1  # Assuming 'games_played' is at index 2
+
+        # Calculate new average score
+        if user_stats[4]:  # Check if 'past_scores' exists
+            past_scores = user_stats[4].split(',')  # Assuming 'past_scores' is at index 4
+        else:
+            past_scores = []
+        past_scores.append(str(total_score))
+        average_score = sum(map(int, past_scores)) / len(past_scores)
+
+        # Update the 'user_stats' table
+        cursor.execute("UPDATE user_stats SET games_played=?, average_score=?, past_scores=?, total_score=? WHERE "
+                       "username=?",
+                       (games_played, average_score, ','.join(past_scores), int(user_stats[5]) + total_score, username))
+    else:
+        # User doesn't exist, create a new record
+        cursor.execute(
+            "INSERT INTO user_stats (username, games_played, average_score, past_scores, total_score) VALUES (?, ?, ?, ?, ?)",
+            (username, 1, total_score, str(total_score), total_score))
+
+    print("updated!!!")
+    conn.commit()
+    conn.close()
+
+
+# Function to fetch user statistics from the database
+def fetch_user_stats(username):
+    conn = sqlite3.connect('user_stats.db')
+    cursor = conn.cursor()
+
+    # Assuming you have a table named 'user_stats' with columns 'username', 'games_played', 'average_score', etc.
+    cursor.execute("SELECT * FROM user_stats WHERE username = ?", (username,))
+    user_stats = cursor.fetchone()
+    conn.close()
+
+    return user_stats
+
+
+# Route for displaying the user profile page
+@app.route('/profile')
+def profile():
+    # Get the username from the session or any other source
+    username = 'example_user'
+
+    # Fetch user statistics from the database
+    user_stats = fetch_user_stats(session['username'])
+
+    if user_stats:
+        games_played = user_stats[2]  # Assuming 'games_played' is at index 2
+        average_score = user_stats[3]  # Assuming 'average_score' is at index 3
+        total_score = user_stats[5]  # Assuming 'total_score' is at index 5
+        past_scores_str = user_stats[4]  # Assuming 'past_scores' is at index 4
+        past_scores = list(map(int, past_scores_str.split(',')))
+    else:
+        # Initialize statistics for new users
+        games_played = 0
+        average_score = 0
+        total_score = 0
+        past_scores = []
+
+    # Pass fetched user statistics to the profile_page.html template
+    return render_template('profile_page.html', username=session['username'], games_played=games_played,
+                           average_score=average_score, total_score=total_score, past_scores=past_scores)
 
 
 @app.route('/about')

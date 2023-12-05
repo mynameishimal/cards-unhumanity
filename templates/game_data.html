@@ -1,11 +1,56 @@
-<!-- end_of_game.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>The End </title>
+    <title>The End - Cards Against Unhumanity</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #222;
+            color: #fff;
+        }
+
+        h1 {
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            margin-top: 30px;
+            font-size: 3em;
+        }
+
+        .navbar {
+            background-color: #000 !important;
+        }
+
+        .navbar-brand {
+            font-size: 2em;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .navbar-nav .nav-link {
+            font-size: 1.2em;
+            margin-right: 15px;
+        }
+
+        .table {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .table th,
+        .table td {
+            border-color: #555;
+        }
+
+        .alert {
+            background-color: #004d00;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.2em;
+        }
+    </style>
 </head>
 <body>
 
@@ -15,31 +60,31 @@
         Cards Against Unhumanity
     </a>
     <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Dashboard</a>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/dashboard">Dashboard</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="about">About</a>
+                <a class="nav-link" href="/about">About</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">My Profile</a>
+                <a class="nav-link" href="/myprofile">My Profile</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Log Out</a>
+                <a class="nav-link" href="/logout">Log Out</a>
             </li>
         </ul>
     </div>
 </nav>
 
 <div class="container mt-4">
-    <h1>End of Game</h1>
-    <table class="table">
+    <h1>The END!</h1>
+    <table class="table table-dark table-striped">
         <thead>
             <tr>
                 <th scope="col">Prompt</th>
                 <th scope="col">Your Answer</th>
-                <th scope="col">Emotion Score</th>
+                <th scope="col">Funny Score</th>
             </tr>
         </thead>
         <tbody>
@@ -47,16 +92,38 @@
             <tr>
                 <td>{{ data.prompt }}</td>
                 <td>{{ data.user_answer }}</td>
-                <td>{{ data.emotion_score }}</td>
+                <td>
+                    {% set fire_emojis = '🔥' * data.emotion_score %}
+                    {{ fire_emojis }}
+                </td>
             </tr>
             {% endfor %}
             <tr>
                 <td></td>
-                <td><b>Total:</b></td>
+                <td><b>Total Score :</b></td>
                 <td><b>{{ total_score }}</b></td>
             </tr>
         </tbody>
     </table>
+
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8">
+            <div class="alert" role="alert">
+                {% if total_score < 10 %}
+                    Oh dear. Must've been a hard week because our algorithm thinks you're no fun and games today. Time to go, or try again?
+                {% elif total_score >= 10 and total_score <= 15 %}
+                    Listen. Comedians come in all shapes and sizes, but our algorithm doesn't think you're one. Prove us wrong?
+                {% elif total_score > 15 and total_score <= 21 %}
+                    Your sense of humor is that of the average Harvard student. Which isn't bad, but, you know.
+                {% elif total_score > 21 and total_score <= 24 %}
+                    Your sense of humor is elite. That's why people like you. It's a form of white privilege, except funny privilege. I bet your friends love you, and you are the center of attention and get drinks for free!
+                {% else %}
+                    Matt Rife? Is that you? Your sense of humor is extremely problematic, and our algorithm thinks you're hilarious for it. Keep on trucking bestie.
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
 </div>
 
 </body>

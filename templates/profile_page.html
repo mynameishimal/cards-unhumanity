@@ -2,9 +2,71 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Profile Page</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Cards Against Humanity Style -->
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Helvetica Neue', sans-serif;
+            padding-top: 60px;
+        }
+        .jumbotron {
+            background-color: #222;
+            color: #fff;
+        }
+        .card {
+            background-color: #333;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        /* Add your own styles for specific elements */
+    </style>
 </head>
 <body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">
+        Cards Against Unhumanity
+    </a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/dashboard">Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/about">About</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/profile">My Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Log Out</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="jumbotron">
+        <h1 class="display-4">Welcome, {{ username }}</h1>
+        <p class="lead">Here are your Cards Against Humor stats:</p>
+    </div>
+
+    <!-- User Statistics -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">User Statistics</h5>
+            <p class="card-text">Number of Games Played: {{ games_played }}</p>
+            <p class="card-text">Average Score: {{ average_score }}</p>
+            <p class="card-text">Total Karma: {{ total_score }}</p>
+            <p class="card-text">Past Scores: {{ past_scores }}</p>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
