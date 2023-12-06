@@ -79,7 +79,7 @@ prompts = [
 ]
 
 
-
+# not utilized currently, but allows for generalizability in the future
 class PromptManager:
     def __init__(self, prompts):
         self.prompt_queue = deque(prompts)

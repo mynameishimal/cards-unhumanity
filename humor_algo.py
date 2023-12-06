@@ -1,6 +1,10 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
+# imports transformers algorithm
 
-
+# function to get top 6 emotions associated with prompt + answer pair
+# texts - parameter containing prompt + answer
+# model - emotion classification model imported from HuggingFace Transformers; link below
+# model finds the top 6 emotions in the emotino predictions
 def get_top_emotions(texts, model, top_k=6):
     tokenizer = AutoTokenizer.from_pretrained(
         "bdotloh/distilbert-base-uncased-go-emotion-empathetic-dialogues-context-v2")
@@ -13,7 +17,10 @@ def get_top_emotions(texts, model, top_k=6):
 
     return top_emotions_indices
 
-
+# This func calculates the humor score by finding the number of emotions in the intersection of emotinos of interest and the top 6 emotions associated with prompt + answer
+# We several emotions of interest: surprised, guilty, joyful, nostalgia, embarassment, furious, jealous, content, angry, and anticipating out of the 28 possible 
+# emotions in GoEmotions that were most associated with the model
+# The humor score is the number of these emotions of interst that are in the top 6 (taken from get_top_emotinos)
 def calculate_emotion_score(prompts, cards, model):
     emotions_of_interest = ["surprised", "guilty", "joyful", "nostalgic", "embarrassed", "furious", "jealous", "content", "angry", "anticipating"]
     combinations = [f"{prompt} {card}" for prompt, card in zip(prompts, cards)]
@@ -23,6 +30,7 @@ def calculate_emotion_score(prompts, cards, model):
     # Get indices for the specified emotions
     emotion_indices = [model.config.label2id[emotion] for emotion in emotions_of_interest]
 
+    # Counts number of emotions in intersection
     scores = []
     for indices in top_emotions_indices:
         count = sum(1 for index in indices if index.item() in emotion_indices)
@@ -38,7 +46,7 @@ def normalize_scores(scores):
     return [score / max_score for score in scores]
 
 
-# test function
+# test function for model
 def main():
     prompts = [
         "Why did the scarecrow win an award?",

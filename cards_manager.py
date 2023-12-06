@@ -207,7 +207,7 @@ sample_card_list = [
     "The Little Engine That Could",
 ]
 
-
+# not utilized currently, but allows for generalizability in the future
 class CardManager:
     def __init__(self, cards):
         self.card_queue = deque(cards)

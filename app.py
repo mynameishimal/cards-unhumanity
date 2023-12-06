@@ -20,10 +20,6 @@ app.secret_key = os.urandom(24)
 def index():
     return render_template('index.html')
 
-# deleteeeeeee????
-@app.route('/cards')
-def cards():
-    return render_template('cards.html')
 
 
 # Function to hash passwords
@@ -38,10 +34,6 @@ def register():
         username = request.form['username']
         password = request.form['password']
         hashed_password = hash_password(password)   # hashes password for security
-        
-        # logs - do we remove?
-        print("Username:", username)
-        print("Hashed Password:", hashed_password)
 
         # connect to user database
         conn = sqlite3.connect('new_user_database.db')
@@ -109,21 +101,14 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
-# removeeeeee???????
-@app.route('/cards')
-def get_cards():
-    # cards = cards_collection.find()  # Retrieve cards from MongoDB
-    return render_template('cards.html', cards=cards)
-
-# removeeee??????????
-# Needs Better implementation!! Dummy function for now
+# We currently have a prepared list of prompts, but left this here for future generalizability
 def get_prompts():
     return prompts
 
 
-"""NOTE TO SELF TO RESET DATA AT THE BEGINNING OF EVERY SESSION!!!"""   # LOL REMOVE???
 
 # displays questions as user plays
+# when prompt number reaches end of deck, shows collects answers and shows endgame screen
 @app.route('/question')
 # function to display a question and answer choices
 def display_question():
@@ -135,7 +120,6 @@ def display_question():
         next_prompt_num = prompt_num + 1  # Increment prompt_num for the next question
     # stores game data if game is complete
     else:
-        print("DONE")
         my_game_data = session.get("game_data")
         results = end_game(my_game_data)
         stats = results[0]
@@ -146,7 +130,6 @@ def display_question():
     # Gets cards (responses)
     cards = sample_card_list
     drawn_cards = random.sample(cards, 6)      # randomly picks 6 responses from list stored in cards_manager
-    print(drawn_cards)  #LOG
 
     return render_template('question.html', prompt_num=prompt_num, prompt=prompt, next_prompt_num=next_prompt_num,
                            drawn_cards=drawn_cards)
@@ -161,7 +144,7 @@ def reset_game():
     # Redirect back to the initial state of the game
     return redirect('/question')  # Redirect to the initial question route or wherever the game starts
 
-# REMOVE???? idk if this is used
+
 @app.route('/collect_answers', methods=['POST'])
 def collect_answers():
     prompt = request.form.get('prompt')  # Get the prompt from the form
@@ -252,7 +235,6 @@ def update_user_stats(username, total_score):
             "INSERT INTO user_stats (username, games_played, average_score, past_scores, total_score) VALUES (?, ?, ?, ?, ?)",
             (username, 1, total_score, str(total_score), total_score))
 
-    print("updated!!!")
     conn.commit()
     conn.close()
 

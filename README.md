@@ -5,6 +5,9 @@ Purpose:
 Through games of Cards Against Humanity, the site will rate the user's humor using a custom humor detection algorithm. The user can create an account to save their progress and view the statistics of all their past games.
 
 Installation: 
+Install flask
+Pytorch or Tensorflow to run humor algo 
+Install SQL
 
 Usage: 
 Once in the directory, type "flask run" into the terminal and hit enter. Click the link generated, and enjoy!
@@ -22,9 +25,10 @@ Clicking "My Profile" will take you to a page that displays your user statistics
 
 Clicking "Log Out" will log you out and take you back to the login page.
 
-License:
-
-Credits:
+Acknowledgements:
+- used ChatGPT for some design elements, though vast majority of code is our own
+- link source of cards and responses
+- link emotion algo source
 
 
 
