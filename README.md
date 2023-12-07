@@ -1,18 +1,21 @@
-Title: 
+## Video link: https://youtu.be/7kfQuKRckyI
+
+## Title: 
 Cards Against Humor
 
-Purpose: 
+## Purpose: 
 Through games of Cards Against Humanity, the site will rate the user's humor using a custom humor detection algorithm. The user can create an account to save their progress and view the statistics of all their past games.
 
-Installation: 
-Install flask
-Pytorch or Tensorflow to run humor algo 
-Install SQL
+## Installation: 
+Install flask: https://flask.palletsprojects.com/en/3.0.x/installation/
+Install PyTorch: https://pytorch.org/get-started/locally/
+Install TensorFlow: https://www.tensorflow.org/install
+Drag all files from the zip file containing the program into your environment. 
 
-Usage: 
+## Usage: 
 Once in the directory, type "flask run" into the terminal and hit enter. Click the link generated, and enjoy!
 
-How to play: 
+## How to play: 
 If it's your first time, click the "Register" button on the homepage to create an account. Enter a username and password, and then use those credentials to log in. If you're a returning user, click the "Login" button instead and use your existing credentials. 
 
 You should now be at your dashboard. From here, you can play the game, learn about the algorithm behind it, or view your gameplay statistics.
@@ -24,11 +27,12 @@ Clicking "About" will take you to a page that explains the code behind the humor
 Clicking "My Profile" will take you to a page that displays your user statistics: number of games played, average score, total karma (lifetime number of points earned), and a list of your past scores.
 
 Clicking "Log Out" will log you out and take you back to the login page.
-
-Acknowledgements:
-- used ChatGPT for some design elements, though vast majority of code is our own
-- link source of cards and responses
-- link emotion algo source
+    
+## Acknowledgements:
+Source of card prompts: https://board-games.fandom.com/wiki/Cards_Against_Humanity/List_of_black_cards
+Source of card responses: https://board-games.fandom.com/wiki/Cards_Against_Humanity/List_of_white_cards
+Source of emotion detection algorithm: HuggingFace Transformers
+We used ChatGPT 3.5 for some design elements and to debug some code. That being said, the overwhelming majority of the code we wrote is entirely our own, based off our own research.
 
 
 

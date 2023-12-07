@@ -67,14 +67,34 @@
     </nav>
     <div class="container">
         <h1>Our Algorithm</h1>
-        <p>
-            This is where our algorithm comes from! We modified it to only consider the emotions we thought 
-            aligned best with humor. 
-        </p>
-        <div class="play-button">
-            <a href="/question">Learn more!</a>
-        </div>
+    <p>For this project, we have come up with what we feel is a useful but preliminary algorithm for measuring the humor score of certain plays in Cards-Against-Humanity. Unfortunately, there are not a ton of robust models to measure humor from language. Thus, we utilized an emotion classification algorithm, and adapted the results to correlate better with what we consider to be funny! Functions associated with this algorithm have all been abstracted away into humor_algo.py, which is outside of the main app.py document.</p>
+
+    <p>We imported a multi-label emotion classification BERT algorithm from HuggingFace Transformers database. This algorithm was trained on a large database of Reddit comments and their associated emotions. There are 28 emotions, and for each emotion, the BERT gives a score. Of the 28 emotions, my partner and I determined ten "emotions of interest", which we consider as useful or correlated with comedic plays in Cards-Against-Humanity. These emotions of interest are:</p>
+
+    <ul>
+        <li>surprised</li>
+        <li>guilty</li>
+        <li>joyful</li>
+        <li>nostalgic</li>
+        <li>embarrassed</li>
+        <li>furious</li>
+        <li>jealous</li>
+        <li>content</li>
+        <li>angry</li>
+        <li>anticipating</li>
+    </ul>
+
+    <p>The humor score is calculated based on <strong>the number of "emotions of interest" in the top 5 emotions (of highest score) that the Transformer has determined from a string of {prompt} + {answer}</strong>.</p>
+
+    <p>For example, if the prompt was "It's always spooky when", and your answer was "the next PSET drops", the transformer would assess the associatedness of the string "It's always spooky when the next PSET drops" to each of the 28 emotions. Depending on the 6 most likely emotional contexts for this string are then checked against the emotions of interest to evaluate how many emotions are in the intersection of the two sets. The number of emotions in the intersection of the two sets is the humor score.</p>
+
+    <p><em>We recognize that this model is preliminary and may not be the ideal method of calculating a humor score from the game. Therefore, a future direction for this application would be to train a specialized NLP model to recognize silliness in Cards-Against-Humanity plays. That is beyond the scope of the project we have developed for this class, although a topic of future interest for me and my partner. Nonetheless, because humor is subjective, we feel that this model of classifying humor is valid as well.</em></p>
+
+    <p>The transformer that we used can be found at the following link:</p>
+
+    <a href="https://huggingface.co/bdotloh/distilbert-base-uncased-go-emotion-empathetic-dialogues-context-v2">https://huggingface.co/bdotloh/distilbert-base-uncased-go-emotion-empathetic-dialogues-context-v2</a>
     </div>
+    
 
 </body>
 </html>

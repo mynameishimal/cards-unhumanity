@@ -74,7 +74,6 @@ prompts = [
     "What's there a ton of in heaven?",
     "The socialist governments of Scandinavia have declared that access to _____ is a basic human right.",
     "How am I maintaining my relationship status?",
-    "When all else fails, I can always masturbate to _____.",
     "The U.S. has begun airdropping _____ to the children of Afghanistan."
 ]
 
